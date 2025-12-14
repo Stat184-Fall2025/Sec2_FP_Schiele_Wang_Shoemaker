@@ -4,5 +4,4 @@ foodCanada <- foods %>%
   mutate(FoodValue = (FoodValue / 1000000)) %>%
   mutate(Year = as.numeric(Year)) %>%
   select(-Country, -Category)
-View(foodCanada)
 
