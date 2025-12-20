@@ -4,6 +4,7 @@ author: "Luke Shoemaker"
 date: "December 19, 2025"
 format:
   pdf:
+    documentclass: scrartcl
     geometry: 
       - top = 1in
       - bottom = 1in
