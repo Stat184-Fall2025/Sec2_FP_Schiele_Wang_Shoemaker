@@ -25,51 +25,64 @@ csl: apa-7.csl
 
 # Introduction
 
+Every year, the United States imports billions of dollars worth of food from other countries, to feed it’s people and to resell. The composition of these imports has changed; over time, it has become a global endeavor, with the United States now importing food and related goods from almost every country in the World. The US government keeps a record of the past 20 years of trade data and has made it available to the public. That data is what we will be using in this project. The data is neatly divided as a CSV file into different categories, countries, and years to make it easy for data manipulation and calculation. Using this, we will observe how US trade data can be categorized and how it has changed over time.
+
 # Data Provenance
+
+Dataset title: U.S. Food Imports
+
+Publisher / Data Steward: United States Department of Agriculture, Economic Research Service (ERS)
+
+Source agency of raw data: U.S. Department of Commerce, U.S. Census Bureau trade statistics
+
+Contact person (at ERS): Angelica Williams (as listed on the ERS page)
+
+Collection period: Calendar years covers 20 years
+
+Geographic scope: United States ports and origin countries globally
+
+Last Update: April 11 2025
+
+Data Format: CSV
 
 # FAIR and CARE Principles
 
-```
 Our data satisfies both the FAIR and CARE principles of data. Our data is FAIR because it is easily findable and accessible to anybody since it just exists on a government website and can be simply downloaded as a CSV file before being uploaded anywhere. As a CSV file, it is very interoperable; when uploaded into R, we could immediately work on it very easily. The data is also reusable since the government kept records of how the data was kept and stored. For CARE, we use the data to gain insights about the evolving world, which is beneficial to everyone. The data was collected in a way where the US Government (the collector) has authority over it since it is their financial records, and the data was collected from governments that can regulate what is shared. We made sure to use this data ethically and responsibly, not making any judgments or treating different nations unfairly.
-```
 
 # Attributes of Interest
 
-```
 The primary attributes that are used in this analysis are from the Food Imports data set:
 
-- YearNum: The year that the food was imported.
-- Country: The source country of the import.
-- Commodity: The specific food or item group.
-- FoodValue: The value for the imported food, with the meaning of that value being in the UOM column.
-- UOM (Unit of Measure): The units that the imported item's value is measured in.
+- **YearNum**: The year that the food was imported.
+- **Country**: The source country of the import.
+- **Commodity**: The specific food or item group.
+- **FoodValue**: The value for the imported food, with the meaning of that value being in the UOM column.
+- **UOM** (Unit of Measure): The units that the imported item's value is measured in.
 
 Along with these attributes, several were created to support the visualizations:
 
-- Percentage_Change: The percentage that the total food value has changed by since the previous year.
-- proportion: Each country's share of total U.S. food imports for that given year.
-- TotalVal: The total import value for each food commodity type.
-```
+- **Percentage_Change**: The percentage that the total food value has changed by since the previous year.
+- **proportion**: Each country's share of total U.S. food imports for that given year.
+- **TotalVal**: The total import value for each food commodity type.
 
 # Exploratory Data Analysis
 
 ## Overview of the Data set
 
-```
 The U.S. Food Imports Data set, which was provided by the U. S. Department of Agriculture, Economic Research Service, has the records of the value of food and beverages products imported to the United States. The data spans over the the years of 1999 to 2024.
 
 The following are the columns that are structured in a long format table for the data set: 
-- Commodity: The specific food or item group (e.g. "Total live animals", "Bovine animals, live", "Swine, live"). 
-- Country: The source country of the import (e.g. "CANADA", "MEXICO", "CHINA"). 
-- UOM (Unit of Measure): The units that the imported item's value is measured in (e.g. "Million \$", "1,000", "1,000 mt"). 
-- Category: Broader classifications for the imported item's type (e.g. "Animals", "Fish", "Vegetables"). 
-- SubCategory: Broader classifications for the imported item's value meaning (e.g. "Foods", "Total foods", "Subtotal foods"). 
-- RowNumber: An identifier for each row of the table 
-- YearNum: The year that the food was imported (e.g. "1999"). 
-- FoodValue: The value for the imported food, with the meaning of that value being in the UOM column.
+- **Commodity**: The specific food or item group (e.g. "Total live animals", "Bovine animals, live", "Swine, live"). 
+- **Country**: The source country of the import (e.g. "CANADA", "MEXICO", "CHINA"). 
+- **UOM** (Unit of Measure): The units that the imported item's value is measured in (e.g. "Million \$", "1,000", "1,000 mt"). 
+- **Category**: Broader classifications for the imported item's type (e.g. "Animals", "Fish", "Vegetables"). 
+- **SubCategory**: Broader classifications for the imported item's value meaning (e.g. "Foods", "Total foods", "Subtotal foods"). 
+- **RowNumber**: An identifier for each row of the table 
+- **YearNum**: The year that the food was imported (e.g. "1999"). 
+- **FoodValue**: The value for the imported food, with the meaning of that value being in the UOM column.
 
 The full data set has 19,838 rows and 8 columns
-```
+
 ## Key Visualizations and Insights
 
 ```{r}
@@ -133,7 +146,7 @@ foods <- foodraw %>%
 
 ### The Top Ten Food Import Countries Over Time Through the Years 1999 to 2024
 
-```{r}
+```{r top 10 countries plot}
 ggplot(
   food_imports_prop_graph_data,
   aes(x = year, y = proportion, group = Country, color = Country)
@@ -146,7 +159,7 @@ ggplot(
     x = "Year",
     y = "Proportion (%)",
     color = "Country",
-    alt = "The graph shows 10 countries"
+    alt = "The line graph shows the proportions (%) of total U.S. food imports for the top 10 countries importing the most to the U.S. (Australia, Chile, France, Italy, Rest of World, Canada, Chile, Indonesia, Mexico, and Vietnam), from the years 1999 to 2024. Mexico is probably the biggest outlier with it being close to 1% at the beginning, but continuously rising faster than all of th eother countries through the years to be the country with the highest proportion at around 3%, from around 2018 to 2024. Countries like Canada and the Rest of the world, which is the other countries than those listed in the original data set, stay at a pretty constant average, betwen 2% to 3%, with them mostly getting closer to each other as the years go on, but not really increasing their proprotion percentage at all. The other countries shown stay at very low percentages, and show nothing to note."
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -154,11 +167,11 @@ ggplot(
 
 ### Top 10 Countries Narrative Text
 
-
+The graph shows the different countries and their proportion percentage that they contribute to the U.S. total import value for that year. The countries: Australia, Chile, France, Italy, China, Indonesia, Mexico, and Vietnam are all apart of the 10 countries with the highest proption percentages, but compared to the top 3 countries they are very low. Each of these countries most years have percentages between 0.1% to 0.6%, with most of them slightly increasing as time goes on. Canada is usually had the either the 2nd or 3rd highest percentage with it starting around 2% in 1999 and until around 2020 staying around the same percentage with only a slight increase through the years, until after 2020, where it began to increase at a relatively fast rateand reaching almost 3% in 2023, and being only slightly less in 2024, and in these final 2 years it reached the second highest percentage. The Rest of World country is not actually a country but all of the countries that were not apart of the original data set but contributed to importing food and beverages to the U.S. It had the highest percentage through most of the years and started at a little less than 3% in 1999, throughout the years this percentage went up and down a bit, between 2.5% and 3%. It really started to decrease after 2011 though and ended with a final percentage of around 2.75% in 2024 at the 3rd highest percentage. The most interesting country though was definetly Mexico, which started out at a little more than 1% but had a very high increase through the years, reaching 2% in 2013, and then 3% in around 2022, and in 2024 ended with almost 3.5%, leaving it as the highest percentage amoung all countries and having an increase of nearly 2.5% through the years, which is very impressive compared to the rest of the countries.
 
 ### Year-Over-Year Percentage Change in Total Food Import Value to the US
 
-```{r}
+```{r year-over-year-table and plot, tbl.cap = "The table shows a bit of an increase in the percentage from the years 2000 to 2003, where after that until 2009, the percentage stays pretty constant, being around 10%. In 2009 though the percentage drops a lot all the way down to -9%. The next 2 years have a big bounce back though with the increasing to 12% and then 17 %. Between the years 2012 to 2020 though the values decrease a bit and go up and down between the percentages of 1% and 10%. In 2021 though there is a very large spike rising to a peak of 18% and then decreasing all the way down to -1% in 2023, and ending off 2024 with around 9%."}
 foodtotals <- foods %>%
   group_by(Year) %>%
   summarise(
@@ -192,11 +205,11 @@ ggplot(foodchanges, aes(x = Year, y = Percentage_Change, group = 1)) +
 
 ### Percentage Change Narrative Text
 
-
+The table and graph show that the percentage change is something that often and has spikes in both the positive and negative direction. In 2000 the percent change from the previous year is around 5%, and this value increases during the following years until 2003. From 2003 until 2009, the value stays pretty constant, being between around 9% and 11%. In 2009 though the percent change value drops all the way to -9%, and this is likely because of the 2008 economic crash which had caused many economic problems and likely was the reason that this large change happened causing the total imported food value to decrease so much from the previous year. After this year, there was a big bounce back with 2010 having around 13% percent change, and almost 18% in 2011. This value though dropped after this and went up and down a little between the years of 2012 until 2021, where it was between the ranges of around 1% and 10%. In 2021 though there was a large spike leading to the largest peak in all of the data at around 18%, and this is likely because of the Covid-19 Pandemic that happened in 2020 which made creating our own food in the U.S. somewhat difficult and leading the U.S. to importing more food from countries which were not shut down. This was also the case in 2022 whch had a high value of almost 14%. This though dropped sharply in 2023 going to around -1%, and then finishing 2024 with a pretty high almost 9%. This data shows that the percent of change value is effected heavily by real world events, specifically those economically related. It also showed that most years the percent change was positive, meaning the U.S. was importing more food in every each year than the last on average.
 
 ### Top 10 Most Valuable Food Commodity Types Imported into the U.S from Years 1999 to 2024
 
-```{r}
+```{r Highest total value commodity, tbl.cap = "Table shows the different types of commodities and their total value throughout the years. It shows that U.S. imports has the highest value by far with a total value at around 2.7 trillion dollars. The second highest total value belongs to Plants which has a value of around 169 billion dollars. Totall fish and shellfish, Animals, Total fruit and preparations, Beverages, Total beverages, Total vegetables and preparations, Fresh or chilled fruit, and Total grains products all have pretty close total values ranging between around 47 to 90 billion dollars."}
 MostValFoodType <- FoodImports %>% 
   filter(UOM == 'Million $') %>%
   group_by(Commodity) %>% # group all cases where country is the same
@@ -209,13 +222,14 @@ kable(head(MostValFoodType, 10), caption = "Figure 3: Data set where each case i
 
 ### Top 10 Commodity Types Narrative Text
 
-
+The table shows the relationship between the different food commodities and the total value, in millions of U.S. dollars, for all of the years of 1999 to 2024. The commodity listed with the lowest total value is Total grains and products which starts out at around 467000 million dollars. Fresh or chilled fruit is next with just a little more than the previous at around 480000 million dollars. Total vegetables and preparations are a bit more than the previous with around 534000 million dollars. Then the next commodities are Total beverages and Beverages which is quite a bit of an increase from the previous with both being around 600000 million dollars. The next commodity is an even larger leap with Total fruit and preparations being at 717000 million dollars. Then with a slight increase from that is Animals, with a total value of 740000 million dollars. Total fish and shellfish is a significant increase from the previous at around 884000 million dollars and is the 3rd highest value. Then a 2nd highest value is Plants which is a very large increase and almost doubling the previous with a total value of 1690000 million dollars or 1.69 trillion dollars. Then the highest total value is the U.S. imports which is at 2700000 million dollars or 2.7 billion dollars, which is another very large increase from the previous.
 
 # Discussion and Data Story
 
 # Author Contributions
 
 # Code Appendix
+
 ```{r, echo=TRUE, results='hide'}
 library(ggplot2)
 library(tidyr)
