@@ -249,6 +249,14 @@ The table shows the relationship between the different food commodities and the 
 
 # Discussion and Data Story
 
+The analysis of U.S. food imports from 1999 to 2024 reveals several important trends. A small set of countries consistently dominates the U.S. import market, with Mexico and Canada contributing the largest proportions of total imports throughout the years. The top ten importing countries collectively account for the majority of food import values, while other countries have smaller but steady contributions. The year-over-year percentage change shows that total import values are sensitive to major economic events, such as the 2008 financial crisis and the COVID-19 pandemic, which caused noticeable drops and spikes in imports.
+
+Among food commodities, certain types, such as Plants and aggregate U.S. imports, have consistently had the highest total values, indicating that the U.S. relies heavily on a few key commodities. Mexico’s share of imports increased steadily from just over 1% in 1999 to nearly 3.5% in 2024, suggesting growing trade relationships and demand. Canada maintained a strong presence throughout the period, often ranking as the second or third largest contributor, while the “Rest of World” category represents other countries not individually listed, showing relatively consistent contributions.
+
+These patterns highlight potential vulnerabilities in the U.S. food supply. The concentration of imports in a few countries and commodities means that disruptions in these areas could have significant impacts. For example, economic crises, trade restrictions, or global events can substantially affect the total value of imports. The data also illustrates the importance of monitoring trends over time to anticipate shifts in the market and to inform policy decisions.
+
+Overall, this analysis demonstrates that the U.S. food import market is shaped by both international trade dynamics and real-world events. Policymakers and businesses may consider strategies to diversify import sources, strengthen domestic production, or monitor critical commodities to reduce risk. Future work could explore more detailed commodity-level trends, the impact of trade agreements, or the role of global supply chain disruptions on U.S. food imports.
+
 # Author Contributions
 
 ### Luke Shoemaker
