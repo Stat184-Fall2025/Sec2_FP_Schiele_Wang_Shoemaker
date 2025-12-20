@@ -24,7 +24,7 @@ execute:
 
 # Introduction
 
-Every year, the United States imports billions of dollars worth of food from other countries, to feed it’s people and to resell. The composition of these imports has changed; over time, it has become a global endeavor, with the United States now importing food and related goods from almost every country in the World. The US government keeps a record of the past 20 years of trade data and has made it available to the public. That data is what we will be using in this project. The data is neatly divided as a CSV file into different categories, countries, and years to make it easy for data manipulation and calculation. Using this, we will observe how US trade data can be categorized and how it has changed over time.
+Every year, the United States imports billions of dollars worth of food from other countries, to feed its citizens and to resell. The composition of these imports has changed. Over time, it has become a global endeavor with the United States now importing food and related goods from almost every country in the World. The US government keeps a record of the past 20 years of trade data and it is available to the public. That data is what we will be analyzing in this project. The data is neatly divided as a CSV file into different categories, countries, and years to make it easy for data manipulation and calculation. Using this, we will observe how US trade data can be categorized and how it has changed over time.
 
 # Data Provenance
 
@@ -68,7 +68,7 @@ Along with these attributes, several were created to support the visualizations:
 
 ## Overview of the Data set
 
-The U.S. Food Imports Data set, which was provided by the U. S. Department of Agriculture, Economic Research Service, has the records of the value of food and beverages products imported to the United States. The data spans over the the years of 1999 to 2024.
+The U.S. Food Imports Data set, provided by the U. S. Department of Agriculture and Economic Research Service, has the records of the value of food and beverages products imported to the United States. The data spans over the the years of 1999 to 2024.
 
 The following are the columns that are structured in a long format table for the data set: 
 - **Commodity**: The specific food or item group (e.g. "Total live animals", "Bovine animals, live", "Swine, live"). 
