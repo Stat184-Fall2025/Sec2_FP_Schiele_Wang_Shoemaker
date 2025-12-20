@@ -1,0 +1,315 @@
+---
+title: "U.S. Food Imports: Trends and Visualizations (1999–2024)"
+author: "Luke Shoemaker"
+date: "December 19, 2025"
+format:
+  pdf:
+    geometry: 
+      - top = 1in
+      - bottom = 1in
+      - left = 1in
+      - right = 1in
+    toc: false
+    number-sections: false
+    echo: false
+    warning: false
+    error: false
+    message: false
+    fig-cap-location: top
+    tbl-cap-location: top
+execute:
+  echo: false
+  warning: false
+csl: apa-7.csl
+---
+
+# Introduction
+
+# Data Provenance
+
+# FAIR and CARE Principles
+
+```
+Our data satisfies both the FAIR and CARE principles of data. Our data is FAIR because it is easily findable and accessible to anybody since it just exists on a government website and can be simply downloaded as a CSV file before being uploaded anywhere. As a CSV file, it is very interoperable; when uploaded into R, we could immediately work on it very easily. The data is also reusable since the government kept records of how the data was kept and stored. For CARE, we use the data to gain insights about the evolving world, which is beneficial to everyone. The data was collected in a way where the US Government (the collector) has authority over it since it is their financial records, and the data was collected from governments that can regulate what is shared. We made sure to use this data ethically and responsibly, not making any judgments or treating different nations unfairly.
+```
+
+# Attributes of Interest
+
+```
+The primary attributes that are used in this analysis are from the Food Imports data set:
+
+- YearNum: The year that the food was imported.
+- Country: The source country of the import.
+- Commodity: The specific food or item group.
+- FoodValue: The value for the imported food, with the meaning of that value being in the UOM column.
+- UOM (Unit of Measure): The units that the imported item's value is measured in.
+
+Along with these attributes, several were created to support the visualizations:
+
+- Percentage_Change: The percentage that the total food value has changed by since the previous year.
+- proportion: Each country's share of total U.S. food imports for that given year.
+- TotalVal: The total import value for each food commodity type.
+```
+
+# Exploratory Data Analysis
+
+## Overview of the Data set
+
+```
+The U.S. Food Imports Data set, which was provided by the U. S. Department of Agriculture, Economic Research Service, has the records of the value of food and beverages products imported to the United States. The data spans over the the years of 1999 to 2024.
+
+The following are the columns that are structured in a long format table for the data set: 
+- Commodity: The specific food or item group (e.g. "Total live animals", "Bovine animals, live", "Swine, live"). 
+- Country: The source country of the import (e.g. "CANADA", "MEXICO", "CHINA"). 
+- UOM (Unit of Measure): The units that the imported item's value is measured in (e.g. "Million \$", "1,000", "1,000 mt"). 
+- Category: Broader classifications for the imported item's type (e.g. "Animals", "Fish", "Vegetables"). 
+- SubCategory: Broader classifications for the imported item's value meaning (e.g. "Foods", "Total foods", "Subtotal foods"). 
+- RowNumber: An identifier for each row of the table 
+- YearNum: The year that the food was imported (e.g. "1999"). 
+- FoodValue: The value for the imported food, with the meaning of that value being in the UOM column.
+
+The full data set has 19,838 rows and 8 columns
+```
+## Key Visualizations and Insights
+
+```{r}
+#load libraries
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(knitr)
+library(scales)
+
+#Code is in Tydyverse Style
+```
+
+```{r}
+#read in dataset
+foodraw = read.csv("FoodImports.csv")
+FoodImports = read.csv("FoodImports.csv")
+```
+
+```{r}
+#Wrangling dataset
+food_imports_country <- FoodImports %>%
+  filter(UOM == 'Million $' & Country != 'WORLD') %>%
+  group_by(Country,YearNum) %>%
+  summarize(total_imports = sum(FoodValue))
+
+food_imports_yearly <- FoodImports %>%
+  filter(YearNum != 'means' & YearNum != 'means10years') %>%
+  group_by(YearNum) %>%
+  summarize(yearly_imports = sum(FoodValue))
+
+food_imports_prop <- food_imports_country %>%
+  left_join(food_imports_yearly, by = 'YearNum') %>%
+  mutate(proportion = (total_imports/yearly_imports) * 100)
+
+top_ten_countries <- food_imports_prop %>%
+  group_by(Country) %>%
+  summarise(avg = mean(proportion)) %>%
+  arrange(desc(avg)) %>%
+  mutate(avg = percent(avg/100))
+
+top_ten <- top_ten_countries$Country[1:10]
+
+food_imports_prop_graph_data <- food_imports_prop %>%
+  filter(Country %in% top_ten) %>%
+  mutate(year = as.numeric(YearNum))
+
+foods <- foodraw %>%
+  # Filter out all cases that have unwanted values
+  filter(!Country %in% c("REST OF WORLD", "WORLD", "WORLD (Quantity)")) %>%
+  filter(UOM %in% c("1000", "Million $")) %>%
+  filter(!Category %in% c("Food dollars", "Food volume", "Prices")) %>%
+  filter(SubCategory == "Foods") %>%
+  filter(!YearNum %in% c("means", "means10years")) %>%
+  # Multiply 1000 to FoodValue value if UOM value is 1000 or multiply by 1000000 if  UOM value is Million $
+  mutate(FoodValue = FoodValue * ifelse(UOM == "1000", 1000, 1000000)) %>%
+  select(-UOM, -RowNumber, -SubCategory) %>%
+  rename(Year = YearNum)
+```
+
+### The Top Ten Food Import Countries Over Time Through the Years 1999 to 2024
+
+```{r}
+ggplot(
+  food_imports_prop_graph_data,
+  aes(x = year, y = proportion, group = Country, color = Country)
+) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(breaks = seq(2000, 2024, by = 5)) + 
+  labs(
+    title = "The Top Ten Food Import Countries Over Time",
+    x = "Year",
+    y = "Proportion (%)",
+    color = "Country",
+    alt = "The graph shows 10 countries"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+### Top 10 Countries Narrative Text
+
+
+
+### Year-Over-Year Percentage Change in Total Food Import Value to the US
+
+```{r}
+foodtotals <- foods %>%
+  group_by(Year) %>%
+  summarise(
+    value_total = sum(FoodValue)
+  ) %>%
+  arrange(Year)
+
+foodchanges <- foodtotals %>%
+  mutate(value_previous = lag(value_total),
+         percent_change = (((value_total - value_previous) / value_previous) * 100)
+  ) %>%
+  filter(!is.na(percent_change)) %>%
+  mutate(Year = as.numeric(Year)) %>%
+  rename(Percentage_Change = percent_change) %>%
+  select(Year, Percentage_Change)
+
+kable(foodchanges, caption = "Figure 4: This table shows the percentage changes of the total imported food value to the United States during the years of 2000 to 2024")
+
+ggplot(foodchanges, aes(x = Year, y = Percentage_Change, group = 1)) + 
+  geom_line(color = "blue", linewidth = 1.5) + 
+  scale_x_continuous(breaks = seq(2000, 2024, by = 5)) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Year Over Year Percentage Change in Total Food Import Value", 
+    x = "Year", 
+    y = "Percentage Change (%) from Previous Year", 
+    alt = "The graph shows that the percentage changes from most years were increasing, most years the changes were positive, being around 5-10%, although there are some outliers, like 2009 which had the previous several years around 10%, but 2009 dropped all the way down to -9%, which was the lowest it got in all of the data. 2021 is also an outlier year which had the previous several years having pretty low changes, but 2021 rose all the way up to 18% which was the highest recorded in all of the data, and then dropping down to -1% in 2023. "
+  ) + 
+  theme_minimal()
+```
+
+### Percentage Change Narrative Text
+
+
+
+### Top 10 Most Valuable Food Commodity Types Imported into the U.S from Years 1999 to 2024
+
+```{r}
+MostValFoodType <- FoodImports %>% 
+  filter(UOM == 'Million $') %>%
+  group_by(Commodity) %>% # group all cases where country is the same
+  summarize(
+    TotalVal = sum(FoodValue)) %>%
+  arrange(desc(TotalVal)) # make countries in table descend based on Total Food Value, so highest values at the top, and lowest at the bottom
+
+kable(head(MostValFoodType, 10), caption = "Figure 3: Data set where each case is a Type of Import, listing the Total Food Value that has been imported in Millions of US dollars") 
+```
+
+### Top 10 Commodity Types Narrative Text
+
+
+
+# Discussion and Data Story
+
+# Author Contributions
+
+# Code Appendix
+```{r, echo=TRUE, results='hide'}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(knitr)
+library(scales)
+
+foodraw = read.csv("FoodImports.csv")
+FoodImports = read.csv("FoodImports.csv")
+
+#Wrangling dataset
+food_imports_country <- FoodImports %>%
+  filter(UOM == 'Million $' & Country != 'WORLD') %>%
+  group_by(Country,YearNum) %>%
+  summarize(total_imports = sum(FoodValue))
+
+food_imports_yearly <- FoodImports %>%
+  filter(YearNum != 'means' & YearNum != 'means10years') %>%
+  group_by(YearNum) %>%
+  summarize(yearly_imports = sum(FoodValue))
+
+food_imports_prop <- food_imports_country %>%
+  left_join(food_imports_yearly, by = 'YearNum') %>%
+  mutate(proportion = (total_imports/yearly_imports) * 100)
+
+top_ten_countries <- food_imports_prop %>%
+  group_by(Country) %>%
+  summarise(avg = mean(proportion)) %>%
+  arrange(desc(avg)) %>%
+  mutate(avg = percent(avg/100))
+
+top_ten <- top_ten_countries$Country[1:10]
+
+food_imports_prop_graph_data <- food_imports_prop %>%
+  filter(Country %in% top_ten) %>%
+  mutate(year = as.numeric(YearNum))
+
+foods <- foodraw %>%
+  # Filter out all cases that have unwanted values
+  filter(!Country %in% c("REST OF WORLD", "WORLD", "WORLD (Quantity)")) %>%
+  filter(UOM %in% c("1000", "Million $")) %>%
+  filter(!Category %in% c("Food dollars", "Food volume", "Prices")) %>%
+  filter(SubCategory == "Foods") %>%
+  filter(!YearNum %in% c("means", "means10years")) %>%
+  # Multiply 1000 to FoodValue value if UOM value is 1000 or multiply by 1000000 if  UOM value is Million $
+  mutate(FoodValue = FoodValue * ifelse(UOM == "1000", 1000, 1000000)) %>%
+  select(-UOM, -RowNumber, -SubCategory) %>%
+  rename(Year = YearNum)
+
+ggplot(
+  food_imports_prop_graph_data,
+  aes(x = year, y = proportion, group = Country, color = Country)
+) +
+  geom_line() +
+  geom_point() +
+  #scale_y_continuous(labels = +
+  scale_x_continuous(breaks = sort(unique(food_imports_prop_graph_data$year))) +
+  labs(
+    title = "The Top Ten Food Import Countries Over Time",
+    x = "Year",
+    y = "Proportion (%)",
+    color = "Country"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+foodtotals <- foods %>%
+  group_by(Year) %>%
+  summarise(
+    value_total = sum(FoodValue)
+  ) %>%
+  arrange(Year)
+
+foodchanges <- foodtotals %>%
+  mutate(value_previous = lag(value_total),
+         percent_change = (((value_total - value_previous) / value_previous) * 100)
+  ) %>%
+  filter(!is.na(percent_change)) %>%
+  mutate(Year = as.numeric(Year)) %>%
+  rename(Percentage_Change = percent_change) %>%
+  select(Year, Percentage_Change)
+
+kable(foodchanges, caption = "Figure 4: This table shows the percentage changes of the total imported food value to the United States during the years of 2000 to 2024")
+
+ggplot(foodchanges, aes(x = Year, y = Percentage_Change, group = 1)) + 
+  geom_line(color = "blue", linewidth = 1.5) + 
+  scale_x_continuous(breaks = seq(2000, 2024, by = 5)) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Year Over Year Percentage Change in Total Food Import Value", 
+    x = "Year", 
+    y = "Percentage Change (%) from Previous Year", 
+    alt = "The graph shows that the percentage changes from most years were increasing, most years the changes were positive, being around 5-10%, although there are some outliers, like 2009 which had the previous several years around 10%, but 2009 dropped all the way down to -9%, which was the lowest it got in all of the data. 2021 is also an outlier year which had the previous several years having pretty low changes, but 2021 rose all the way up to 18% which was the highest recorded in all of the data, and then dropping down to -1% in 2023. "
+  ) + 
+  theme_minimal()
+```
