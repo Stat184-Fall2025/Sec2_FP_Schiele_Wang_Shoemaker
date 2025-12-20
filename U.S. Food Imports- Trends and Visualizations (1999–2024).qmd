@@ -20,7 +20,6 @@ format:
 execute:
   echo: false
   warning: false
-csl: apa-7.csl
 ---
 
 # Introduction
@@ -29,7 +28,7 @@ Every year, the United States imports billions of dollars worth of food from oth
 
 # Data Provenance
 
-Dataset title: U.S. Food Imports
+Data set title: U.S. Food Imports
 
 Publisher / Data Steward: United States Department of Agriculture, Economic Research Service (ERS)
 
@@ -85,7 +84,11 @@ The full data set has 19,838 rows and 8 columns
 
 ## Key Visualizations and Insights
 
-```{r}
+```{r Load in neccessary libraries}
+#| code-summary: "Load libraries and set style guide"
+#| author: "Luke Shoemaker"
+#| reviewed-by: "Bonnie Wang"
+
 #load libraries
 library(ggplot2)
 library(tidyr)
@@ -97,13 +100,21 @@ library(scales)
 #Code is in Tydyverse Style
 ```
 
-```{r}
-#read in dataset
+```{r Load in data sets}
+#| code-summary: "Reading in the data sets"
+#| author: "Luke Shoemaker"
+#| reviewed-by: "Bonnie Wang"
+
+#read in data set
 foodraw = read.csv("FoodImports.csv")
 FoodImports = read.csv("FoodImports.csv")
 ```
 
-```{r}
+```{r Wrangle data}
+#| code-summary: "Wrangling the data from the raw form to data that can actually be plotted"
+#| author: "Luke Shoemaker and Brian Schiele"
+#| reviewed-by: "Bonnie Wang"
+
 #Wrangling dataset
 food_imports_country <- FoodImports %>%
   filter(UOM == 'Million $' & Country != 'WORLD') %>%
@@ -147,6 +158,10 @@ foods <- foodraw %>%
 ### The Top Ten Food Import Countries Over Time Through the Years 1999 to 2024
 
 ```{r top 10 countries plot}
+#| code-summary: "Creating plotting for top 10 countries data"
+#| author: "Brian Schiele"
+#| reviewed-by: "Bonnie Wang"
+
 ggplot(
   food_imports_prop_graph_data,
   aes(x = year, y = proportion, group = Country, color = Country)
@@ -172,6 +187,10 @@ The graph shows the different countries and their proportion percentage that the
 ### Year-Over-Year Percentage Change in Total Food Import Value to the US
 
 ```{r year-over-year-table and plot, tbl.cap = "The table shows a bit of an increase in the percentage from the years 2000 to 2003, where after that until 2009, the percentage stays pretty constant, being around 10%. In 2009 though the percentage drops a lot all the way down to -9%. The next 2 years have a big bounce back though with the increasing to 12% and then 17 %. Between the years 2012 to 2020 though the values decrease a bit and go up and down between the percentages of 1% and 10%. In 2021 though there is a very large spike rising to a peak of 18% and then decreasing all the way down to -1% in 2023, and ending off 2024 with around 9%."}
+#| code-summary: "Creating table and plot for year-over-year data set"
+#| author: "Luke Shoemaker"
+#| reviewed-by: "Bonnie Wang"
+
 foodtotals <- foods %>%
   group_by(Year) %>%
   summarise(
@@ -210,6 +229,10 @@ The table and graph show that the percentage change is something that often and 
 ### Top 10 Most Valuable Food Commodity Types Imported into the U.S from Years 1999 to 2024
 
 ```{r Highest total value commodity, tbl.cap = "Table shows the different types of commodities and their total value throughout the years. It shows that U.S. imports has the highest value by far with a total value at around 2.7 trillion dollars. The second highest total value belongs to Plants which has a value of around 169 billion dollars. Totall fish and shellfish, Animals, Total fruit and preparations, Beverages, Total beverages, Total vegetables and preparations, Fresh or chilled fruit, and Total grains products all have pretty close total values ranging between around 47 to 90 billion dollars."}
+#| code-summary: "Created plotting for the commodities with the most total value"
+#| author: "Brian Schiele"
+#| reviewed-by: "Bonnie Wang"
+
 MostValFoodType <- FoodImports %>% 
   filter(UOM == 'Million $') %>%
   group_by(Commodity) %>% # group all cases where country is the same
@@ -227,6 +250,20 @@ The table shows the relationship between the different food commodities and the 
 # Discussion and Data Story
 
 # Author Contributions
+
+### Luke Shoemaker
+
+Created and did a lot of the work on the qmd file, mainly the structure, some of the paragraphs like the attributes of interest, and overview of the data set parts. Specifically worked on the Year-Over-Year percentage change table and plot, and did a lot of the code for the wrangling as well. Also worked on some of the narrative texts for the visualizations
+
+### Brian Schiele
+
+Created most of the data wrangling and created the visualizations for the Top 10 countries visualizations, along with the Top 10 commodity type plots. Wrote the paragraphs for the Introduction, Data Provenance, and FAIR and CARE principles. Also did a bit of reviewing the document and reviewing the final code chunks.
+
+### Bonnie Wang
+
+Was a big contributor in the narrative texts for the visualizations, while also writing the Discussion and Data Story section which described the whole data set and what it showed. Also was a big contributor by reviewing all of the code chunks to make sure there were no errors, and also reviewed the whole document to make sure all points on rubric would be met.
+
+# References
 
 # Code Appendix
 
